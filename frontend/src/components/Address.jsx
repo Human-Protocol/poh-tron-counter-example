@@ -1,21 +1,26 @@
-import { useMetaMask } from 'metamask-react';
+import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 
-const Address = () => {
-  const { status, account } = useMetaMask();
+const Address = ({ isConnected }) => {
+  const [address, setAddress] = useState('');
 
-  const isWalletConnected = status === 'connected';
+  useEffect(() => {
+    if (!isConnected) {
+      return;
+    }
+    setAddress(tronWeb.defaultAddress.base58);
+  }, [isConnected]);
 
-  if (!isWalletConnected) {
+  if (!isConnected) {
     return null;
   }
 
-  const croppedAccount = `${account.slice(0, 6)}...${account.slice(-4)}`;
+  const croppedAccount = `${address.slice(0, 6)}...${address.slice(-4)}`;
 
   return (
     <div
       css={css`
-        color: #c5c0dc;
+        color: #918bac;
         font-size: 1rem;
       `}
     >

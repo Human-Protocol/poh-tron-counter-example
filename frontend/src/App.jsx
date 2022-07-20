@@ -1,48 +1,71 @@
-import React from 'react';
-import { useMetaMask } from 'metamask-react';
+import React, { useEffect, useState } from 'react';
+import styled from '@emotion/styled';
 import Card from './components/Card';
 import Header from './components/Header';
 import Address from './components/Address';
 import ConnectWallet from './components/ConnectWallet';
+import Spinner from './components/Spinner';
 import Error from './components/Error';
 import Counter from './components/Counter';
-import { networkId, networkName } from './config';
+
+const TIMEOUT = 1 * 1000; // 1 second
+
+const Wrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const App = () => {
-  const { status, chainId } = useMetaMask();
+  const [loading, setLoading] = useState(true);
+  const [walletConnected, setWalletConnected] = useState(false);
 
-  const isMetamaskUnavailable = status === 'unavailable';
-  const isWalletConnected = status === 'connected';
-  const isCorrectNetwork = chainId === networkId;
+  const waitForWallet = async (startTimestamp) => {
+    if (!window.tronLink) {
+      setTimeout(() => waitForWallet(startTimestamp), 10);
+      if (performance.now() - startTimestamp >= TIMEOUT) {
+        setLoading(false);
+      }
+      return;
+    }
+    setLoading(false);
+    if (window.tronLink?.ready) {
+      setWalletConnected(true);
+    }
+  };
+
+  useEffect(() => {
+    waitForWallet(performance.now());
+  }, []);
 
   let main = null;
 
-  if (isMetamaskUnavailable) {
+  if (loading) {
+    main = (
+      <Wrapper>
+        <Spinner />
+      </Wrapper>
+    );
+  } else if (!window.tronLink) {
     main = (
       <Error>
-        <p>MetaMask is not found.</p>
+        <p>TronLink is not found.</p>
         <p>
           This app requires{' '}
-          <a href="https://metamask.io/" target="_blank">
-            MetaMask
+          <a href="https://www.tronlink.org/" target="_blank">
+            TronLink
           </a>{' '}
           extension.
         </p>
       </Error>
     );
-  } else if (isWalletConnected) {
-    if (isCorrectNetwork) {
-      main = <Counter />;
-    } else {
-      main = (
-        <Error>
-          <p>Wrong network.</p>
-          <p>Please use {networkName}.</p>
-        </Error>
-      );
-    }
+  } else if (!window.tronLink?.ready) {
+    main = <ConnectWallet onConnect={() => setWalletConnected(true)} />;
+  } else if (walletConnected) {
+    main = <Counter />;
   } else {
-    main = <ConnectWallet />;
+    main = <div>fuck</div>;
   }
 
   return (
@@ -51,7 +74,7 @@ const App = () => {
         <Header>Counter</Header>
         {main}
       </Card>
-      <Address />
+      <Address isConnected={walletConnected} />
     </React.Fragment>
   );
 };

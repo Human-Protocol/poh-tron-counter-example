@@ -1,4 +1,4 @@
-# Sample Counter dApp (Proof-of-Humanity enabled)
+# Sample Counter dApp (Proof-of-Humanity enabled) for TRON
 
 DApp permitting **humans** to increment a counter (updated from a basic version).
 
@@ -10,20 +10,19 @@ Once counter reach `99`, next increment will be reverting to `1`.
 
 ## Live demo
 
-https://poh-counter.bakoush.in
+https://poh-tron-counter.bakoush.in
 
-## Integrating PoH example
+## TRON Contract
 
-- [Initial version (no PoH)](https://github.com/bakoushin/poh-counter-example/tree/basic-counter)
-- [List of changes](https://github.com/bakoushin/poh-counter-example/commit/b96d77e2cd802187a9008393ab1bc46749bb2bbe)
+https://shasta.tronscan.org/#/contract/TWu1kwBRW9z8ZSpqsAr4bLyw3aWuw3gPXC/transactions
 
 ## See also
 
 - [Proof-of-HUMANity on-chain: protect your smart contracts from bots](https://www.humanprotocol.org/blog/proof-of-humanity-on-chain-protect-your-smart-contracts-from-bots)
-- [Proof-of-Humanity-React](https://npmjs.com/package/poh-react)
-- [Proof-of-Humanity hCaptcha Validator API](https://github.com/bakoushin/poh-validator-hcaptcha-api)
+- [Proof-of-Humanity TRON Solidity Contracts](https://github.com/bakoushin/poh-tron-contracts)
+- [Proof-of-Humanity TRON React](https://npmjs.com/package/poh-react)
+- [Proof-of-Humanity TRON hCaptcha Validator API](https://github.com/bakoushin/poh-tron-validator-hcaptcha-api)
 - [Proof-of-Humanity hCaptcha Validator React](https://npmjs.com/package/poh-validator-hcaptcha-react)
-- [Proof-of-Humanity Solidity Contracts](https://github.com/bakoushin/poh-contracts)
 
 ## Author
 

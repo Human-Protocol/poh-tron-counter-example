@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { ethers } from 'ethers';
-import { useMetaMask } from 'metamask-react';
-import { useProofOfHumanity } from 'poh-react';
+import { useProofOfHumanity } from 'poh-tron-react';
 import HCaptchaValidator from 'poh-validator-hcaptcha-react';
 import Button from './Button';
 import Spinner from './Spinner';
 import Error from './Error';
 import { contractAddress, validatorApiUrl, hcaptchaSitekey } from '../config';
-
-const abi = [
-  'function counter() view returns (uint256)',
-  'function increment(bytes calldata proof)',
-  'event Increment(uint256 currentCounter)'
-];
+import abi from '../abi/Counter.json';
 
 const Wrapper = styled.div`
   flex: 1;
@@ -29,26 +22,41 @@ const Value = styled.div`
 `;
 
 function Counter() {
-  const { ethereum } = useMetaMask();
-
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  useEffect(() => {
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const counterContract = new ethers.Contract(contractAddress, abi, provider);
-    counterContract.counter().then((value) => {
-      setCount(Number(value));
-      setInitialized(true);
-    });
-    counterContract.on('Increment', (newValue) => {
-      setCount(Number(newValue));
-    });
+  const initContract = async () => {
+    if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
+      setTimeout(initContract, 10);
+      return;
+    }
 
-    return () => counterContract.removeAllListeners();
-  }, [ethereum]);
+    const tronWeb = window.tronWeb;
+
+    const counterContract = await tronWeb.contract(abi, contractAddress);
+    const value = await counterContract.counter().call();
+    setCount(Number(value));
+    setInitialized(true);
+
+    counterContract.Increment().watch((error, event) => {
+      if (error) {
+        return console.error('Error with "Message" event:', error);
+      }
+
+      const { contract, name, result } = event;
+
+      if (contract === contractAddress && name === 'Increment') {
+        setCount(Number(result.currentCounter));
+        setLoading(false);
+      }
+    });
+  };
+
+  useEffect(() => {
+    initContract();
+  }, []);
 
   const validator = (
     <HCaptchaValidator
@@ -84,7 +92,6 @@ function Counter() {
 
   const handleIncrement = async () => {
     setLoading(true);
-
     try {
       const { error, errorMessage, proof } = await getProofOfHumanity();
       if (error) {
@@ -93,25 +100,18 @@ function Counter() {
         return;
       }
 
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const counterContract = new ethers.Contract(
-        contractAddress,
-        abi,
-        provider
-      );
-      const signer = provider.getSigner();
-      const counterWithSigner = counterContract.connect(signer);
+      const counterContract = await tronWeb.contract(abi, contractAddress);
+      await counterContract.increment(proof).send({
+        feeLimit: 100_000_000,
+        callValue: 0,
+      });
 
-      const tx = await counterWithSigner.increment(proof);
-      const { events } = await tx.wait();
-      if (events.length > 0 && events[0].args.currentCounter) {
-        setCount(Number(events[0].args.currentCounter));
-      }
+      await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
     } catch (error) {
-      console.error(error);
-      setError(error.message || String(error));
+      const message = error.message || JSON.stringify(error);
+      console.error(message);
+      setError(message);
     }
-
     setLoading(false);
   };
 

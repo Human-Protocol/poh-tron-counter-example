@@ -1,9 +1,15 @@
 import React from 'react';
-import { useMetaMask } from 'metamask-react';
 import Button from './Button';
 
-const ConnectWallet = () => {
-  const { connect } = useMetaMask();
+const ConnectWallet = ({ onConnect }) => {
+  const connect = async () => {
+    try {
+      await tronLink.request({ method: 'tron_requestAccounts' });
+      onConnect();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <React.Fragment>

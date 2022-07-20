@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "deploy:mainnet": "source .env && tronbox migrate --network mainnet",
+    "deploy:shasta": "source .env && tronbox migrate --network shasta",
+    "deploy:dev": "source .env && tronbox migrate --network development"
+  },
+  "devDependencies": {
+    "poh-tron-contracts": "0.0.1",
+    "tronbox": "2.7.25"
+  }
+}
