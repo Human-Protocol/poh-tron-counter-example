@@ -19,9 +19,9 @@ https://shasta.tronscan.org/#/contract/TWu1kwBRW9z8ZSpqsAr4bLyw3aWuw3gPXC/transa
 ## See also
 
 - [Proof-of-HUMANity on-chain: protect your smart contracts from bots](https://www.humanprotocol.org/blog/proof-of-humanity-on-chain-protect-your-smart-contracts-from-bots)
-- [Proof-of-Humanity TRON Solidity Contracts](https://github.com/bakoushin/poh-tron-contracts)
+- [Proof-of-Humanity TRON Solidity Contracts](https://github.com/Human-Protocol/poh-tron-contracts)
 - [Proof-of-Humanity TRON React](https://npmjs.com/package/poh-react)
-- [Proof-of-Humanity TRON hCaptcha Validator API](https://github.com/bakoushin/poh-tron-validator-hcaptcha-api)
+- [Proof-of-Humanity TRON hCaptcha Validator API](https://github.com/Human-Protocol/poh-tron-validator-hcaptcha-api)
 - [Proof-of-Humanity hCaptcha Validator React](https://npmjs.com/package/poh-validator-hcaptcha-react)
 
 ## Author
